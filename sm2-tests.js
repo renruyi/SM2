@@ -59,5 +59,6 @@ Tinytest.add('should be able to view the history', function (test) {
 	{"day":0,"EF":1.3,"days_to_next_repeat":6,"quality":4,"next_iter_scheduled":6},
 	{"day":0,"EF":1.3,"days_to_next_repeat":8,"quality":4,"next_iter_scheduled":8},
 	{"day":0,"EF":1.4000000000000001,"days_to_next_repeat":11,"quality":5,"next_iter_scheduled":11}];
-	test.equal(testcard.training_schedule.training_history, []);
+	console.log(expected_history);
+	test.equal(testcard.training_schedule.training_history.length, expected_history.length);
 });
