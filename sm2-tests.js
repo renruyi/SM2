@@ -53,5 +53,11 @@ Tinytest.add('next interval should be 11 with a score of 5', function (test) {
 });
 
 Tinytest.add('should be able to view the history', function (test) {
+	var expected_history = [{"day":0,"EF":1.3,"days_to_next_repeat":1,"quality":1,"next_iter_scheduled":1},
+	{"day":0,"EF":1.3,"in_review_session":true,"days_to_next_repeat":1,"quality":2,"next_iter_scheduled":1},
+	{"day":0,"EF":1.3,"in_review_session":true,"days_to_next_repeat":1,"quality":4,"next_iter_scheduled":1},
+	{"day":0,"EF":1.3,"days_to_next_repeat":6,"quality":4,"next_iter_scheduled":6},
+	{"day":0,"EF":1.3,"days_to_next_repeat":8,"quality":4,"next_iter_scheduled":8},
+	{"day":0,"EF":1.4000000000000001,"days_to_next_repeat":11,"quality":5,"next_iter_scheduled":11}];
 	test.equal(testcard.training_schedule.training_history, []);
 });
