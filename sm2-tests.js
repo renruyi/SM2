@@ -41,3 +41,17 @@ Tinytest.add('with a score of 4 in a new training session, interval should chagn
 	testcard.train(4);
 	test.equal(testcard.training_schedule.interval, 6);
 });
+
+Tinytest.add('next interval should be 8 with a score of 4', function (test) {
+	testcard.train(4);
+	test.equal(testcard.training_schedule.interval, 8);
+});
+
+Tinytest.add('next interval should be 11 with a score of 5', function (test) {
+	testcard.train(5);
+	test.equal(testcard.training_schedule.interval, 11);
+});
+
+Tinytest.add('should be able to view the history', function (test) {
+	test.equal(testcard.training_schedule.training_history, []);
+});
