@@ -14,7 +14,7 @@ Package.onUse(function(api) {
   api.versionsFrom('1.2.0.2');
   api.use('ecmascript');
   api.use('momentjs:moment');
-  api.addFiles('sm2.js');
+  api.addFiles('sm2.js', 'server');
 
   api.export("SMCard");
 });
@@ -24,5 +24,5 @@ Package.onTest(function(api) {
   api.use('momentjs:moment');
   api.use('tinytest');
   api.use('ruyi:sm2'); 
-  api.addFiles('sm2-tests.js');
+  api.addFiles('sm2-tests.js', 'server');
 });

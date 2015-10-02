@@ -1,12 +1,18 @@
 // Write your tests here!
 // Here is an example.
 
+var getNowOffset = function(offset){
+	return moment().add(offset, 'days');
+}
+
+var in_review_session = {in_review_session: true};
+
 Tinytest.add('SMCard should be a function', function (test) {
   	test.equal(typeof SMCard, 'function');
 });
 
 Tinytest.add('Should be able to create a card', function (test) {
-	testcard = new SMCard('123456')
+	testcard = new SMCard('123456', {utc_offset: 5});
   	test.equal(testcard.card_id, '123456');
 });
 
@@ -24,7 +30,7 @@ Tinytest.add('when scored under 3, interval should change to 1 as if it was a ne
 });
 
 Tinytest.add('results in review session should not change the interval', function (test) {
-	testcard.train(2, true);
+	testcard.train(2, in_review_session);
 	test.equal(testcard.training_schedule.interval, 1);
 });
 
@@ -33,21 +39,27 @@ Tinytest.add('as long as the score is under 4, another review session should be 
 });
 
 Tinytest.add('with a score of 4, review session should no long be required', function (test) {
-	testcard.train(4, true);
+	testcard.train(4, in_review_session);
 	test.equal(testcard.training_schedule.requires_review_session, false);
 });
 
 Tinytest.add('with a score of 4 in a new training session, interval should chagne to 6', function (test) {
+	// fast move to that day
+	testcard.training_schedule.getNow = getNowOffset.bind(testcard.training_schedule, 1);
 	testcard.train(4);
 	test.equal(testcard.training_schedule.interval, 6);
 });
 
 Tinytest.add('next interval should be 8 with a score of 4', function (test) {
+	// fast move to that day
+	testcard.training_schedule.getNow = getNowOffset.bind(testcard.training_schedule, 7);
 	testcard.train(4);
 	test.equal(testcard.training_schedule.interval, 8);
 });
 
 Tinytest.add('next interval should be 11 with a score of 5', function (test) {
+	// fast move to that day
+	testcard.training_schedule.getNow = getNowOffset.bind(testcard.training_schedule, 15);
 	testcard.train(5);
 	test.equal(testcard.training_schedule.interval, 11);
 });
@@ -59,6 +71,15 @@ Tinytest.add('should be able to view the history', function (test) {
 	{"day":0,"EF":1.3,"days_to_next_repeat":6,"quality":4,"next_iter_scheduled":6},
 	{"day":0,"EF":1.3,"days_to_next_repeat":8,"quality":4,"next_iter_scheduled":8},
 	{"day":0,"EF":1.4000000000000001,"days_to_next_repeat":11,"quality":5,"next_iter_scheduled":11}];
-	console.log(expected_history);
-	test.equal(testcard.training_schedule.training_history.length, expected_history.length);
+	
+	test.equal(testcard.training_schedule.training_history.length, 6);
+});
+
+Tinytest.add('should disallow training for future schedules', function (test) {
+	// fast move to that day
+	testcard.training_schedule.getNow = function(){return moment();};
+	testcard.train(5);
+	test.equal(testcard.training_schedule.interval, 11);
+	console.log(testcard.training_schedule.training_history);
+	test.equal(testcard.training_schedule.training_history.pop().error, 'not allowed to train');
 });
