@@ -14,14 +14,18 @@ Package.onUse(function(api) {
   api.versionsFrom('1.2.0.2');
   api.use('ecmascript');
   api.use('momentjs:moment');
+  api.use('underscore');
+  api.use('mongo');
   api.addFiles('sm2.js', 'server');
 
   api.export("SMCard");
+  api.export("SMCardModel");
 });
 
 Package.onTest(function(api) {
   api.use('ecmascript');
   api.use('momentjs:moment');
+  api.use('mongo');
   api.use('tinytest');
   api.use('ruyi:sm2'); 
   api.addFiles('sm2-tests.js', 'server');

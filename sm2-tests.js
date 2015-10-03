@@ -7,13 +7,17 @@ var getNowOffset = function(offset){
 
 var in_review_session = {in_review_session: true};
 
+var update_query = {};
+
+var card_id;
+
 Tinytest.add('SMCard should be a function', function (test) {
   	test.equal(typeof SMCard, 'function');
 });
 
 Tinytest.add('Should be able to create a card', function (test) {
-	testcard = new SMCard('123456', {utc_offset: 5});
-  	test.equal(testcard.card_id, '123456');
+	testcard = new SMCard({training_progress:{utc_offset: 5}});
+  	test.equal(typeof testcard, 'object');
 });
 
 Tinytest.add('initial interval should be 1', function (test) {
@@ -80,6 +84,33 @@ Tinytest.add('should disallow training for future schedules', function (test) {
 	testcard.training_schedule.getNow = function(){return moment();};
 	testcard.train(5);
 	test.equal(testcard.training_schedule.interval, 11);
-	console.log(testcard.training_schedule.training_history);
+	//console.log(testcard.training_schedule.training_history);
 	test.equal(testcard.training_schedule.training_history.pop().error, 'not allowed to train');
+});
+
+Tinytest.add('should be able to export data', function (test) {
+	var data = testcard.training_schedule.exportData();
+	test.equal(typeof data, 'object');
+});
+
+Tinytest.add('should return an update query on each training', function (test) {
+	update_query = testcard.training_schedule.train(5);
+	//console.log(update_query);
+	test.equal(typeof update_query, 'object');
+});
+
+Tinytest.add('should be able to retrieve the db record', function (test) {
+	//CardCollection = new Mongo.Collection('SMCards');
+	let card = SMCardModel.findOne({_id: testcard._id});
+	console.log(card);
+	console.log(SMCardModel.find({}).fetch());
+
+	let newcard = new SMCard(card);
+	newcard.training_schedule.getNow = getNowOffset.bind(newcard.training_schedule, 26);
+	newcard.train(5);
+
+	test.equal(card, testcard._id);
+	test.equal(newcard.training_schedule.training_history.length, 8);
+	test.equal(newcard.training_schedule.interval, 17);
+	console.log(newcard.training_schedule.exportData());
 });
